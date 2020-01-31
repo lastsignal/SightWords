@@ -1,0 +1,202 @@
+<html>
+
+<head>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <style>
+    body {
+      background-color: #eee;
+      margin: auto;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      min-height: 300px;
+    }
+
+    .container div {
+      padding-bottom: 20px;
+    }
+
+    .card {
+      flex-basis: 120px;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      transition: 0.3s;
+      background-color: white;
+    }
+
+    .card:hover {
+      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .content {
+      padding: 50px 10px;
+      width: 400px;
+      text-align: center;
+      font-size: 8em;
+      font-family: cursive, Arial, Helvetica, sans-serif;
+    }
+
+    .btn{
+      /* position:absolute; */
+      display: inline-block;
+      text-decoration: none;
+      color: black;
+      width: 120px;
+      height: 80px;
+      line-height: 80px;
+      border-radius: 50%;
+      text-align: center;
+      font-weight: bold;
+      vertical-align: middle;
+      overflow: hidden;
+      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.29);
+      transition: .4s;
+    }
+
+    .btn:active{
+      -ms-transform: translateY(2px);
+      -webkit-transform: translateY(2px);
+      transform: translateY(2px);
+      box-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
+      border-bottom: none;
+    }
+
+    .btn-blue{
+      background: #8198ff;
+      border-bottom: solid 3px #656ebd;
+    }
+
+    .btn-green{
+      background: #81ffcb;
+      border-bottom: solid 3px #65bd87;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div>
+      <h2>1st grade sight words</h2>
+    </div>
+    <div class="card">
+      <div id="main" class="content"></div>
+    </div>
+    <div id="report" style="padding-top: 12px"></div>
+    <div>
+      <a id="start" href="#" class="btn btn-green">Start</a>
+      <a id="next" href="#" class="btn btn-blue" style="display: none;">Next</a>
+    </div>
+  </div>
+
+
+</body>
+<script>
+  var source = [
+    "a", "about", "after", "again", "all", "an",
+    "and", "any", "are", "as", "at", "be", "been", "before",
+    "boy", "but", "by", "can", "cat", "come", "day", "did",
+    "do", "down", "eat", "for", "from", "get", "give", "go",
+    "good", "had", "has", "have", "he", "her", "here", 
+    "his", "how", "I", "if", "in", "is", "it", "just",
+    "know", "like", "little", "long", "make", "man", "many", "me",
+    "much", "my", "new", "no", "not", "of", "old", "on",
+    "one", "or", "other", "our", "out", "put", "said", "see",
+    "she", "so", "some", "take", "that", "the", "their", "them",
+    "then", "there", "they", "this", "three", "to", "two", "up",
+    "us", "very", "was", "we", "were", "what", "when", "which",
+    "who", "will", "with", "work", "would", "you", "your"
+  ];
+
+  function shuffle(o) {
+    for (var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+  };
+
+  $(document).ready(function () {
+    
+    var words;
+    var start;
+    var end;
+    var state;
+
+    function updateCard() {
+      $('#main').text(state == "start"?"-":words[pointer]);
+    }
+
+    function init(){
+      updateReport();
+    }
+
+    function updateButtons() {
+        switch(state){
+        case "start":
+          $('#next').hide(500,function(){
+            $('#start').text('Start').show(800);
+          });
+          break;
+        case "showing":
+          $('#start').hide(500, function(){
+            $('#next').show(800);
+          });
+          break;
+        case "end":
+          $('#next').hide(500, function(){
+            $('#start').text('Restart').show(800);
+          });
+          break;
+      }
+    }
+
+    function updateReport() {
+      var report = "";
+
+      switch(state){
+        case "start":
+          report = "Press start to begin...";
+          break;
+        case "showing":
+        case "end":
+          report = `${pointer+1} of ${end}`;
+          break;
+      }
+
+      $('#report').text(report);
+    }
+
+    function updateComponents(){
+      updateCard();
+      updateReport();
+      updateButtons();
+    }
+
+    $('#next').click(function () {
+      pointer++;
+      if(pointer == end-1){
+        state = "end";
+      }
+      updateComponents();
+      return false;
+    });
+
+    $('#start').click(function(){
+      pointer = 0;
+      state = "showing";
+      updateComponents();
+    });
+
+    words = shuffle(source);
+    start = 0;
+    end = words.length;
+    pointer = start;
+    state = "start";
+
+    updateComponents();
+
+  });
+
+</script>
+
+</html>
